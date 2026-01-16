@@ -22,7 +22,7 @@ This separation makes the code easier to understand, test, and extend.
 The data model is simple and is carefully designed to support deduplication, updates, and fast queries.
 Events are stored in an in-memory map: ConcurrentHashMap<String, Event> where:
 Key → eventId
-Value → latest valid Event information
+, Value → latest valid Event information
 
 Each Event contains:
 1. eventId – Unique identifier for deduplication.
