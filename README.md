@@ -1,11 +1,11 @@
 # Machine Events Backend System
 
-##### Introduction-
+### Introduction-
 
 This project is a backend system built using Java and Spring Boot to simulate how a factory backend receives and processes events from machines. Each machine when produce non-defective or defective items will send events to backend system.
 The backend system stores these events, handles duplicates or updates, and provides statistics for a given time range.
 
-##### Architecture-
+### Architecture-
 The application follows a 3 layered architecture:
 
 Controller Layer → Service Layer → Store Layer (In-Memory)
@@ -19,7 +19,7 @@ This separation makes the code easier to understand, test, and extend.
 
 
 
-##### Data Model-
+### Data Model-
 
 The data model is simple and is carefully designed to support deduplication, updates, and fast queries.
 Events are stored in an in-memory map: ConcurrentHashMap<String, Event> where:
@@ -38,7 +38,7 @@ For statistics, the system does not maintain a separate data structure. Instead,
 
 
 
-##### Deduplication and Update Logic-
+### Deduplication and Update Logic-
 
 Each event sent by the machine is uniquely identified by its eventId.
 When a new event comes in, the system checks if an event with the same eventId already exists:
@@ -52,7 +52,7 @@ Payload comparison is done using the equals() method of the Event class, which c
 
 
 
-##### Thread Safety-
+### Thread Safety-
 
 The system is designed to be thread-safe because multiple machines can send events at the same time.
 
@@ -64,7 +64,7 @@ Because of this, even if multiple threads ingest the same event concurrently, on
 
 
 
-##### Stats and Query Logic-
+### Stats and Query Logic-
 
 Statistics are calculated using only eventTime to reflect when events actually occurred.
 For machine stats, events are filtered by machineId and a time range where the start is inclusive and the end is exclusive. All valid events are counted, but events with defectCount = -1 are excluded from defect totals. The average defect rate is computed per hour and used to determine machine health.
@@ -73,7 +73,7 @@ For top defect lines, events are grouped by lineId within the given time window.
 
 
 
-##### Performance Strategy-
+### Performance Strategy-
 
 To handle at least 1000 events per second, the following strategies are used:
 1. In-memory storage instead of database calls.
@@ -85,7 +85,7 @@ Statistics queries are read-only and operate on stable data, which keeps them fa
 
 
 
-##### Edge Cases and Assumptions-
+### Edge Cases and Assumptions-
 
 Edge Cases Handled-
 1. Duplicate events (same eventId, same payload) - Identical events are deduplicated and stored only once.
@@ -107,7 +107,7 @@ Assumptions-
 
 
 
-##### Setup and Run Instructions-
+### Setup and Run Instructions-
 
 Prerequisites-
 1. Java 17+
@@ -125,7 +125,7 @@ Available APIs-
 
 
 
-##### Improvement-
+### Improvement-
 
 In the future, the in-memory storage can be replaced with a database such as PostgreSQL or MySQL to make the system persistent and prevent data loss when the application restarts. Using a database would also allow the application to scale beyond a single instance, as multiple service instances could safely read and write to the same data store. With database support, transactional updates and constraints can enforce deduplication and update rules more reliably under high concurrency. Indexes on commonly queried fields like eventTime, lineId, and machineId would significantly improve query performance as the volume of events grows. Overall, adding a database would make the system more robust, scalable, and suitable for long-term production use.
 
